@@ -1,62 +1,70 @@
 import React, { Component } from "react";
-import {
-  HelpBlock,
-  FormGroup,
-  FormControl,
-  ControlLabel
-} from "react-bootstrap";
+import { HelpBlock, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import "./Signup.css";
+import { Auth } from "aws-amplify";
 
 export default class Signup extends Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
+        this.state = {
+        isLoading: false,
+        email: "",
+        password: "",
+        confirmPassword: "",
+        confirmationCode: "",
+        newUser: null
+        };
+    }
+//form validation
+    validateForm() {
+        return (
+            this.state.email.length > 0 &&
+            this.state.password.length > 0 &&
+            this.state.password === this.state.confirmPassword
+        );
+    }
 
-    this.state = {
-      isLoading: false,
-      email: "",
-      password: "",
-      confirmPassword: "",
-      confirmationCode: "",
-      newUser: null
-    };
-  }
+    validateConfirmationForm() {
+        return this.state.confirmationCode.length > 0;
+    }
 
-  validateForm() {
-    return (
-      this.state.email.length > 0 &&
-      this.state.password.length > 0 &&
-      this.state.password === this.state.confirmPassword
-    );
-  }
+    handleChange = event => {
+        this.setState({
+        [event.target.id]: event.target.value
+        });
+    }
+//handles what to do when sumbit is clicked on signup
+    handleSubmit = async event => {
+        event.preventDefault();
+        this.setState({isLoading: true});
+        try {
+            const newUser = await Auth.signUp({
+                username: this.state.email,
+                password: this.state.password
+            });
+        this.setState({newUser});
+        } catch (e) {
+            alert(e.message);
+        }
+        this.setState({isLoading: false});
+    }
+//handles what to do when confirming a signup
+    handleConfirmationSubmit = async event => {
+        event.preventDefault();
+        this.setState({ isLoading: true });
+        try {
+            await Auth.confirmSignUp(this.stsate.email, this.state.confirmationCode);
+            await Auth.signIn(this.state.email, this.state.password);
+            this.props.userHasAuthenticated(true);
+            this.props.history.push("/");
+        } catch (e) {
+            alert(e.message);
+            this.setState({isLoading: false});
+        }
+    }
 
-  validateConfirmationForm() {
-    return this.state.confirmationCode.length > 0;
-  }
-
-  handleChange = event => {
-    this.setState({
-      [event.target.id]: event.target.value
-    });
-  }
-
-  handleSubmit = async event => {
-    event.preventDefault();
-
-    this.setState({ isLoading: true });
-
-    this.setState({ newUser: "test" });
-
-    this.setState({ isLoading: false });
-  }
-
-  handleConfirmationSubmit = async event => {
-    event.preventDefault();
-
-    this.setState({ isLoading: true });
-  }
-
-  renderConfirmationForm() {
+    renderConfirmationForm() {
     return (
       <form onSubmit={this.handleConfirmationSubmit}>
         <FormGroup controlId="confirmationCode" bsSize="large">
@@ -68,17 +76,17 @@ export default class Signup extends Component {
             onChange={this.handleChange}
           />
           <HelpBlock>Please check your email for the code.</HelpBlock>
-//        </FormGroup>
-////        <LoaderButton
-////          block
-////          bsSize="large"
-////          disabled={!this.validateConfirmationForm()}
-////          type="submit"
-////          isLoading={this.state.isLoading}
-////          text="Verify"
-////          loadingText="Verifying…"
-////        />
-//      </form>
+        </FormGroup>
+        <LoaderButton
+          block
+          bsSize="large"
+          disabled={!this.validateConfirmationForm()}
+          type="submit"
+          isLoading={this.state.isLoading}
+          text="Verify"
+          loadingText="Verifying…"
+        />
+      </form>
     );
   }
 
@@ -109,17 +117,17 @@ export default class Signup extends Component {
             onChange={this.handleChange}
             type="password"
           />
-//        </FormGroup>
-////        <LoaderButton
-////          block
-////          bsSize="large"
-////          disabled={!this.validateForm()}
-////          type="submit"
-////          isLoading={this.state.isLoading}
-////          text="Signup"
-////          loadingText="Signing up…"
-////        />
-//      </form>
+        </FormGroup>
+        <LoaderButton
+          block
+          bsSize="large"
+          disabled={!this.validateForm()}
+          type="submit"
+          isLoading={this.state.isLoading}
+          text="Signup"
+          loadingText="Signing up…"
+        />
+      </form>
     );
   }
 
