@@ -5,11 +5,12 @@ import { success, failure } from "./libs/response-lib";
 export async function main(event, context) {
   const data = JSON.parse(event.body);
   const params = {
-    TableName: "weeklyhours",
+    TableName: "weeks",
     Item: {
       userId: event.requestContext.identity.cognitoIdentityId,
-      dailyId: uuid.v1(),
+      weekId: uuid.v1(),
       content: data.content,
+      attachment: data.attachment,
       createdAt: Date.now()
     }
   };

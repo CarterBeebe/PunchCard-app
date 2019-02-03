@@ -1,5 +1,5 @@
 # NOTE: update this with your service name
-service: punchcard-app
+service: punchcard-app-api
 
 # Use the serverless-webpack plugin to transpile ES6
 plugins:
@@ -44,31 +44,60 @@ functions:
     handler: create.main
     events:
       - http:
-          path: dailyHours
+          path: weeks
           method: post
           cors: true
           authorizer: aws_iam
           
 get:
     # Defines an HTTP API endpoint that calls the main function in get.js
-    # - path: url path is /dailyHours/{id}
+    # - path: url path is /weeks/{id}
     # - method: GET request
     handler: get.main
     events:
       - http:
-          path: dailyHours/{id}
+          path: weeks/{id}
           method: get
           cors: true
           authorizer: aws_iam
           
 delete:
     # Defines an HTTP API endpoint that calls the main function in delete.js
-    # - path: url path is /dailyHours/{id}
+    # - path: url path is /weeks/{id}
     # - method: DELETE request
     handler: delete.main
     events:
       - http:
-          path: dailyHours/{id}
+          path: weeks/{id}
           method: delete
           cors: true
           authorizer: aws_iam
+          
+list:
+    # Defines an HTTP API endpoint that calls the main function in list.js
+    # - path: url path is /weeks
+    # - method: GET request
+    handler: list.main
+    events:
+      - http:
+          path: weeks
+          method: get
+          cors: true
+          authorizer: aws_iam
+          
+update:
+    #Defines an HTTP API endpoint that calls the main function in update.js
+    # - path: url path is /weels/{id}
+    #- method: PUT request
+    handler: update.main
+    events:
+        - http:
+            path: weeks/{id}
+            method: put
+            cors: true
+            authorizer: aws_iam
+
+# Create our resources with separate CloudFormation templates
+resources:
+  # API Gateway Errors
+  - ${file(resources/api-gateway-errors.yml)}
