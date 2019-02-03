@@ -26,7 +26,7 @@ handleChange = event => {
 
 handleSubmit = async event => {
     event.preventDefault();
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
   try {
     await Auth.signIn(this.state.email, this.state.password);
     this.props.userHasAuthenticated(true);
@@ -34,7 +34,7 @@ handleSubmit = async event => {
   } 
   catch (e) {
       alert(e.message);
-      this.setState({isLoading: false});
+      this.setState({ isLoading: false });
   }
 }
 
@@ -63,6 +63,7 @@ render() {
                 block
                 bsSize="large"
                 disabled={!this.validateForm()}
+                type="submit"
                 isLoading={this.state.isLoading}
                 text="Login"
                 loadingText="Logging you in..."
