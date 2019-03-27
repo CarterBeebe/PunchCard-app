@@ -1,8 +1,9 @@
-.NewNote form {
+.NewWeek form {
   padding-bottom: 15px;
 }
 
-.NewNote form textarea {
+.NewWeek form textarea {
   height: 300px;
+  width: 150px;
   font-size: 24px;
 }

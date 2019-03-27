@@ -23,7 +23,7 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: "PunchCardApp",
+        name: "weeks",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
       },

@@ -51,7 +51,7 @@ export default class NewWeek extends Component {
   }
   
   createWeek(week) {
-      return API.post("week", "/weeks", {
+      return API.post("weeks", "/weeks", {
           body: week
       })
   }
@@ -60,6 +60,7 @@ export default class NewWeek extends Component {
     return (
       <div className="NewWeek">
         <form onSubmit={this.handleSubmit}>
+        <ControlLabel>Monday</ControlLabel>
           <FormGroup controlId="content">
             <FormControl
               onChange={this.handleChange}
