@@ -12,3 +12,15 @@
     color: black;
     font-weight: 500;
 }
+
+.Home .weeks h4 {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  overflow: hidden;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.Home .weeks p {
+  color: #666;
+}
