@@ -30,7 +30,7 @@ handleSubmit = async event => {
   try {
     await Auth.signIn(this.state.email, this.state.password);
     this.props.userHasAuthenticated(true);
-    this.props.history.push("/week/new");
+    //this.props.history.push("/week/new");
   } 
   catch (e) {
       alert(e.message);

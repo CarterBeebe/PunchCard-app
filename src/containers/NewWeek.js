@@ -4,6 +4,7 @@ import LoaderButton from "../components/LoaderButton";
 import config from "../config";
 import "./NewWeek.css";
 import { API } from "aws-amplify";
+import { s3Upload } from "../libs/awsLib";
 
 export default class NewWeek extends Component {
   constructor(props) {
@@ -41,14 +42,21 @@ export default class NewWeek extends Component {
 
     this.setState({ isLoading: true });
     
-    try {
-        await this.createWeek({ content: this.state.content });
-        this.props.history.push("/");
-    } catch (e) {
-        alert(e);
-        this.setState({ isLoading: false });
-    }
+     try {
+    const attachment = this.file
+      ? await s3Upload(this.file)
+      : null;
+
+    await this.createWeek({
+      attachment,
+      content: this.state.content
+    });
+    this.props.history.push("/");
+  } catch (e) {
+    alert(e);
+    this.setState({ isLoading: false });
   }
+}
   
   createWeek(week) {
       return API.post("weeks", "/weeks", {
@@ -60,7 +68,7 @@ export default class NewWeek extends Component {
     return (
       <div className="NewWeek">
         <form onSubmit={this.handleSubmit}>
-        <ControlLabel>Monday</ControlLabel>
+        <ControlLabel>New Week</ControlLabel>
           <FormGroup controlId="content">
             <FormControl
               onChange={this.handleChange}

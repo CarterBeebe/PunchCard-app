@@ -4,6 +4,8 @@ import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import config from "../config";
 import "./Weeks.css";
+import { s3Upload } from "../libs/awsLib";
+
 
 export default class Weeks extends Component {
   constructor(props) {
@@ -13,10 +15,10 @@ export default class Weeks extends Component {
 
     this.state = {
       isLoading: null,
-  isDeleting: null,
-  week: null,
-  content: "",
-  attachmentURL: null
+      isDeleting: null,
+      week: null,
+      content: "",
+      attachmentURL: null
     };
   }
 
@@ -62,7 +64,15 @@ handleFileChange = event => {
   this.file = event.target.files[0];
 }
 
+saveWeek(week) {
+  return API.put("Weeks", `/Weeks/${this.props.match.params.id}`, {
+    body: week
+  });
+}
+
 handleSubmit = async event => {
+  let attachment;
+
   event.preventDefault();
 
   if (this.file && this.file.size > config.MAX_ATTACHMENT_SIZE) {
@@ -71,6 +81,25 @@ handleSubmit = async event => {
   }
 
   this.setState({ isLoading: true });
+
+  try {
+    if (this.file) {
+      attachment = await s3Upload(this.file);
+    }
+
+    await this.saveWeek({
+      content: this.state.content,
+      attachment: attachment || this.state.note.attachment
+    });
+    this.props.history.push("/");
+  } catch (e) {
+    alert(e);
+    this.setState({ isLoading: false });
+  }
+}
+
+deleteWeek() {
+  return API.del("Weeks", `/Weeks/${this.props.match.params.id}`);
 }
 
 handleDelete = async event => {
@@ -85,11 +114,19 @@ handleDelete = async event => {
   }
 
   this.setState({ isDeleting: true });
+
+  try {
+    await this.deleteWeek();
+    this.props.history.push("/");
+  } catch (e) {
+    alert(e);
+    this.setState({ isDeleting: false });
+  }
 }
 
 render() {
   return (
-    <div className="Notes">
+    <div className="Weeks">
       {this.state.note &&
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="content">

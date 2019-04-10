@@ -71,7 +71,7 @@ weeks() {
   renderWeeks() {
     return (
       <div className="weeks">
-        <PageHeader>Your Hours Worked</PageHeader>
+        <PageHeader>Your Weeks</PageHeader>
         <ListGroup>
           {!this.state.isLoading && this.renderWeeksList(this.state.weeks)}
         </ListGroup>
